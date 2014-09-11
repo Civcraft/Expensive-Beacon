@@ -1,6 +1,6 @@
 name: Expensive Beacons
 main: com.untamedears.rourke750.ExpensiveBeacons.ExpensiveBeaconsPlugin
-version: 2.12
+version: 2.14
 author: Rourke750
 commands:
    eb:

@@ -20,6 +20,7 @@ import com.untamedears.rourke750.ExpensiveBeacons.BeaconTypes.SpeedBeacon;
 import com.untamedears.rourke750.ExpensiveBeacons.BeaconTypes.StrengthBeacon;
 import com.untamedears.rourke750.ExpensiveBeacons.DataBase.BeaconStorage;
 import com.untamedears.rourke750.ExpensiveBeacons.DataBase.DataBase;
+import com.untamedears.rourke750.ExpensiveBeacons.DataBase.Info;
 
 public class ExpensiveBeaconsPlugin extends JavaPlugin {
 	public static ExpensiveBeaconsPlugin instance;
@@ -32,6 +33,7 @@ public class ExpensiveBeaconsPlugin extends JavaPlugin {
 	private File file;
 	private Logger logger;
 	private StaticBeaconStructure sbs;
+	private MultiBlockStructure ms;
 	private FileConfiguration config_;
 	
 	public StaticBeaconMeta meta;
@@ -102,7 +104,7 @@ public class ExpensiveBeaconsPlugin extends JavaPlugin {
 		BeaconStorage bc = new BeaconStorage(con, ef);
 		sv = new StoredValues(bc, this, ef);
 		sv.addStoredInfo(); // unloads all data beacon information in the database
-		MultiBlockStructure ms = new MultiBlockStructure(this, ls, sv, meta);
+		ms = new MultiBlockStructure(this, ls, sv, meta);
 		ls = new BeaconListener(ms, sv, this);
 		enableListener();
 				
@@ -111,6 +113,7 @@ public class ExpensiveBeaconsPlugin extends JavaPlugin {
 		for (String command : getDescription().getCommands().keySet()) {
             getCommand(command).setExecutor(com);
         }
+		sanityCheck(bc);
 	}
 
 	public void onDisable() {
@@ -119,5 +122,12 @@ public class ExpensiveBeaconsPlugin extends JavaPlugin {
 
 	private void enableListener() {
 		getServer().getPluginManager().registerEvents(ls, this);
+	}
+	
+	private void sanityCheck(BeaconStorage bs){
+		for (int id: bs.getAllBeaconIds()){
+			Info info = bs.getBeaconInfo(id);
+			ms.checkBuild(info.loc);
+		}
 	}
 }

@@ -2,6 +2,7 @@ package com.untamedears.rourke750.ExpensiveBeacons;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,6 +25,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
@@ -65,6 +67,17 @@ public class BeaconListener implements Listener {
 		if (sv.isInDatabase(event.getRetractLocation()) == null)
 			return;
 		event.setCancelled(true);
+	}
+	
+	@EventHandler(priority = EventPriority.HIGH)
+	public void blockBlowupEvent(EntityExplodeEvent event){
+		Iterator<Block> iterator = event.blockList().iterator();
+		while (iterator.hasNext()) {
+            Block block = iterator.next();
+            Info info = sv.isInDatabase(block.getLocation());
+    		if (info != null)
+    			event.setCancelled(true);
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
